@@ -3,9 +3,8 @@ import CalendarHeader from "./CalendarHeader";
 import CalendarWeekdays from "./CalendarWeekdays";
 import CalendarDaysGrid from "./CalendarDaysGrid";
 import CalendarFooter from "./CalendarFooter";
-
-// 在 JavaScript 的 Date 构造函数中，如果天数为 0，会自动回到“上一个月的最后一天”。
-// 所以 new Date(2024, 7, 0) 实际上是 2024 年 7 月的最后一天（即 2024-07-31），因为 7 代表 8 月，0 号就是 7 月最后一天。
+import CalendarMonths from "./CalendarMonths";
+import CalendarYears from "./CalendarYears";
 
 /**
  * 生成日历网格数据（6行7列，共42格），包含当前月、上月、下月的日期。
@@ -33,8 +32,6 @@ function getCalendarDays(year: number, month: number, selected: Date): any[] {
   // 本月第一天是星期几（0=周一，6=周日）
   // getDay()原生0=周日，+6%7后0=周一，6=周日，方便中国习惯
   const startWeekDay = (firstDayOfMonth.getDay() + 6) % 7;
-
-  console.log({ startWeekDay, lastDayOfMonth });
 
   // 1. 上月补位：如本月1号是周四，则前面补3天（周一~周三）
   for (let i = startWeekDay - 1; i >= 0; i--) {
@@ -77,6 +74,10 @@ const Calendar: React.FC = () => {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth()); // 0-11
   const [selected, setSelected] = useState(now);
+  const [mode, setMode] = useState<"date" | "month" | "year">("date"); // 支持year模式
+  const [decadeStart, setDecadeStart] = useState(
+    Math.floor(now.getFullYear() / 10) * 10
+  ); // 10年区间起始
 
   // 切换到上个月
   const prevMonth = () => {
@@ -111,8 +112,48 @@ const Calendar: React.FC = () => {
     setSelected(now);
     setYear(now.getFullYear());
     setMonth(now.getMonth());
+    setMode("date");
   };
-  console.log({ year, month, selected });
+  // 点击月份，切换到月份选择模式
+  const handleMonthClick = () => setMode("month");
+  // 选择某月，切回日期模式并显示该月，并同步选中日期
+  const handleSelectMonth = (m: number) => {
+    setMonth(m);
+    setMode("date");
+    // 计算该月的天数
+    const lastDay = new Date(year, m + 1, 0).getDate();
+    const day = selected.getDate();
+    // 如果原选中日大于该月最大天数，则选中该月最后一天
+    const newSelected = new Date(year, m, Math.min(day, lastDay));
+    setSelected(newSelected);
+  };
+
+  // 点击年份，切换到年份选择模式
+  const handleYearClick = () => {
+    setMode("year");
+    setDecadeStart(Math.floor(year / 10) * 10);
+  };
+
+  // 选择某年，支持补位点击切换区间并选中，选中后进入月份选择
+  const handleSelectYear = (y: number) => {
+    if (y < decadeStart) {
+      setDecadeStart(decadeStart - 10);
+      setYear(y);
+      setTimeout(() => setMode("month"), 0); // 进入月份选择
+    } else if (y > decadeStart + 9) {
+      setDecadeStart(decadeStart + 10);
+      setYear(y);
+      setTimeout(() => setMode("month"), 0);
+    } else {
+      setYear(y);
+      setMode("month");
+    }
+  };
+
+  // 切换10年区间
+  const prevDecade = () => setDecadeStart(decadeStart - 10);
+  const nextDecade = () => setDecadeStart(decadeStart + 10);
+
   const days = getCalendarDays(year, month, selected);
 
   return (
@@ -122,11 +163,30 @@ const Calendar: React.FC = () => {
         month={month}
         onPrevMonth={prevMonth}
         onNextMonth={nextMonth}
-        onPrevYear={prevYear}
-        onNextYear={nextYear}
+        onPrevYear={mode === "year" ? prevDecade : prevYear}
+        onNextYear={mode === "year" ? nextDecade : nextYear}
+        onMonthClick={handleMonthClick}
+        onYearClick={handleYearClick}
+        showMonth={mode === "date"}
+        decadeTitle={
+          mode === "year" ? `${decadeStart}年-${decadeStart + 9}年` : undefined
+        }
       />
-      <CalendarWeekdays />
-      <CalendarDaysGrid days={days} onSelect={selectDay} />
+      {mode === "date" && <CalendarWeekdays />}
+      {mode === "date" && <CalendarDaysGrid days={days} onSelect={selectDay} />}
+      {mode === "month" && (
+        <CalendarMonths
+          selectedMonth={month}
+          onSelectMonth={handleSelectMonth}
+        />
+      )}
+      {mode === "year" && (
+        <CalendarYears
+          decadeStart={decadeStart}
+          selectedYear={year}
+          onSelectYear={handleSelectYear}
+        />
+      )}
       <CalendarFooter onToday={goToday} />
     </div>
   );
