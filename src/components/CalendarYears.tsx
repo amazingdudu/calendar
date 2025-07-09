@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 
 interface CalendarYearsProps {
   decadeStart: number; // 当前10年区间起始年
@@ -24,15 +25,12 @@ const CalendarYears: React.FC<CalendarYearsProps> = ({
         return (
           <button
             key={y}
-            className={`py-2 rounded-lg transition-colors
-              ${
-                selectedYear === y
-                  ? "bg-blue-600 text-white"
-                  : isEdge
-                  ? "text-gray-500"
-                  : "text-gray-200"
-              }
-              ${!isEdge ? "hover:bg-blue-700" : ""}`}
+            className={classNames("py-2 rounded-lg transition-colors", {
+              "bg-blue-600 text-white": selectedYear === y,
+              "text-gray-500": isEdge && selectedYear !== y,
+              "text-gray-200": !isEdge && selectedYear !== y,
+              "hover:bg-blue-700": !isEdge,
+            })}
             onClick={() => onSelectYear(y)}
           >
             {y}

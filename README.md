@@ -24,29 +24,90 @@ src/components/
   CalendarYears.tsx      // 年份选择
 ```
 
-## 🚀 快速使用
+## 🛠️ 组件 API
 
-在 `App.tsx` 中直接引入并使用：
+### Calendar Props
+
+| 属性名          | 类型                        | 说明                                                                         | 默认值       |
+| --------------- | --------------------------- | ---------------------------------------------------------------------------- | ------------ |
+| value           | `Date \| string`            | 受控用法，当前选中日期                                                       | -            |
+| defaultValue    | `Date \| string`            | 非受控用法，初始选中日期                                                     | `new Date()` |
+| onChange        | `(date: Date) => void`      | 选中日期变化时回调                                                           | -            |
+| showTodayButton | `boolean`                   | 是否显示“今天”按钮                                                           | `true`       |
+| disabledDate    | `(date: Date) => boolean`   | 禁用某些日期（返回 true 表示禁用）                                           | -            |
+| renderDayCell   | `(date, info) => ReactNode` | 自定义日期单元格渲染，info 包含 isCurrentMonth/isToday/isSelected/isDisabled | -            |
+| className       | `string`                    | 自定义外层 class                                                             | -            |
+| style           | `React.CSSProperties`       | 自定义外层 style                                                             | -            |
+
+---
+
+## 🚀 基本用法
 
 ```tsx
+import React, { useState } from "react";
 import Calendar from "./components/Calendar";
 
 function App() {
-  return <Calendar />;
+  const [date, setDate] = useState<Date>(new Date());
+  return <Calendar value={date} onChange={setDate} />;
 }
 ```
 
-## 🛠️ 组件 API（以 Calendar 为例）
+---
 
-目前为内聚式用法，所有交互和状态已内置。若需自定义事件、受控用法，可参考源码扩展：
+### 🎯 非受控用法
 
-- 支持年月日切换、年份区间切换、补位年份点击、今天按钮
-- 可通过修改 props 和状态实现受控
+```tsx
+<Calendar defaultValue="2024-07-01" onChange={(date) => console.log(date)} />
+```
 
-## 🎨 自定义说明
+---
 
-- 样式基于 TailwindCSS，可根据需求自定义 className
-- 交互逻辑均有详细注释，便于二次开发
-- 如需国际化、事件标记、范围选择等功能，可在现有基础上扩展
+### ⛔ 禁用部分日期
+
+```tsx
+// 禁用所有周末
+<Calendar disabledDate={(date) => date.getDay() === 0 || date.getDay() === 6} />
+```
+
+---
+
+### 🧩 自定义日期单元格
+
+```tsx
+<Calendar
+  renderDayCell={(date, info) => (
+    <div>
+      {date.getDate()}
+      {info.isToday && <span style={{ color: "red", fontSize: 10 }}>今</span>}
+      {info.isDisabled && (
+        <span style={{ color: "#aaa", fontSize: 10 }}>禁</span>
+      )}
+    </div>
+  )}
+/>
+```
+
+---
+
+### 🎨 自定义样式
+
+```tsx
+<Calendar
+  className="my-calendar"
+  style={{ minWidth: 320, background: "#222" }}
+/>
+```
+
+---
+
+## 其他说明
+
+- 支持“日历”、“月份”、“年份”三种选择模式，交互流畅
+- 年份选择支持 10 年区间切换，补位年份可点击自动切换区间
+- 月份选择支持 1~12 月网格，选中自动切换到日期视图
+- 日期选择支持高亮、上下月灰显、今天按钮
+- 组件化设计，便于二次开发
+- 样式基于 TailwindCSS + classnames，易于自定义和扩展
 
 ---

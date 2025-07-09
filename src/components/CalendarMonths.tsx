@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 
 interface CalendarMonthsProps {
   selectedMonth: number; // 0-11
@@ -30,11 +31,11 @@ const CalendarMonths: React.FC<CalendarMonthsProps> = ({
       {months.map((m, idx) => (
         <button
           key={m}
-          className={`py-2 rounded-lg transition-colors
-            ${
-              selectedMonth === idx ? "bg-blue-600 text-white" : "text-gray-200"
-            }
-            hover:bg-blue-700`}
+          className={classNames("py-2 rounded-lg transition-colors", {
+            "bg-blue-600 text-white": selectedMonth === idx,
+            "text-gray-200": selectedMonth !== idx,
+            "hover:bg-blue-700": true,
+          })}
           onClick={() => onSelectMonth(idx)}
         >
           {m}

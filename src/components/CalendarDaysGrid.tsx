@@ -1,10 +1,13 @@
 import React from "react";
+import classNames from "classnames";
 
 interface DayCell {
   date: Date;
   isCurrentMonth: boolean;
   isToday: boolean;
   isSelected: boolean;
+  isDisabled?: boolean;
+  render?: React.ReactNode;
 }
 
 interface CalendarDaysGridProps {
@@ -22,14 +25,20 @@ const CalendarDaysGrid: React.FC<CalendarDaysGridProps> = ({
       {days.map((cell, idx) => (
         <button
           key={idx}
-          className={`w-9 h-9 rounded-lg flex items-center justify-center mx-auto
-            ${cell.isCurrentMonth ? "" : "text-gray-500"}
-            ${cell.isSelected ? "bg-blue-600 text-white" : ""}
-            ${cell.isToday && !cell.isSelected ? "border border-blue-400" : ""}
-            hover:bg-blue-700 transition-colors`}
-          onClick={() => onSelect(cell.date)}
+          className={classNames(
+            "w-9 h-9 rounded-lg flex items-center justify-center mx-auto transition-colors",
+            {
+              "text-gray-500": !cell.isCurrentMonth,
+              "bg-blue-600 text-white": cell.isSelected,
+              "border border-blue-400": cell.isToday && !cell.isSelected,
+              "hover:bg-blue-700": !cell.isDisabled,
+              "opacity-50 cursor-not-allowed": cell.isDisabled,
+            }
+          )}
+          onClick={() => !cell.isDisabled && onSelect(cell.date)}
+          disabled={cell.isDisabled}
         >
-          {cell.date.getDate()}
+          {cell.render !== undefined ? cell.render : cell.date.getDate()}
         </button>
       ))}
     </div>

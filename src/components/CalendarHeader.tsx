@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 
 interface CalendarHeaderProps {
   year: number;
@@ -7,10 +8,10 @@ interface CalendarHeaderProps {
   onNextMonth: () => void;
   onPrevYear: () => void;
   onNextYear: () => void;
-  onMonthClick?: () => void; // 新增
-  onYearClick?: () => void; // 新增
-  showMonth?: boolean; // 控制是否显示月份
-  decadeTitle?: string; // 新增，显示10年区间标题
+  onMonthClick?: () => void;
+  onYearClick?: () => void;
+  showMonth?: boolean;
+  decadeTitle?: string;
 }
 
 // 日历头部，显示年月和切换按钮
@@ -52,7 +53,10 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         ) : (
           <>
             <span
-              className="cursor-pointer px-1 rounded hover:bg-blue-700 hover:text-white transition-colors"
+              className={classNames(
+                "cursor-pointer px-1 rounded transition-colors",
+                "hover:bg-blue-700 hover:text-white"
+              )}
               onClick={onYearClick}
               title="选择年份"
             >
@@ -60,7 +64,10 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             </span>
             {showMonth && (
               <span
-                className="cursor-pointer px-1 rounded hover:bg-blue-700 hover:text-white transition-colors"
+                className={classNames(
+                  "cursor-pointer px-1 rounded transition-colors",
+                  "hover:bg-blue-700 hover:text-white"
+                )}
                 onClick={onMonthClick}
                 title="选择月份"
               >

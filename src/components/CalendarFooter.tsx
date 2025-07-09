@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 
 interface CalendarFooterProps {
   onToday: () => void;
@@ -9,7 +10,9 @@ const CalendarFooter: React.FC<CalendarFooterProps> = ({ onToday }) => {
   return (
     <div className="pt-4 pb-1 flex justify-center">
       <button
-        className="text-blue-500 hover:text-blue-400 font-medium px-4 py-1 rounded"
+        className={classNames(
+          "text-blue-500 hover:text-blue-400 font-medium px-4 py-1 rounded"
+        )}
         onClick={onToday}
       >
         今天
