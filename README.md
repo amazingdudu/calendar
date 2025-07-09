@@ -1,69 +1,52 @@
-# React + TypeScript + Vite
+# 日历组件 Calendar
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+本项目内置了一个高交互、现代风格的日历组件，支持年月日选择、10 年区间年份选择、补位年份切换等功能。
 
-Currently, two official plugins are available:
+## ✨ 主要特性
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 支持“日历”、“月份”、“年份”三种选择模式，交互流畅
+- 年份选择支持 10 年区间切换，补位年份可点击自动切换区间
+- 月份选择支持 1~12 月网格，选中自动切换到日期视图
+- 日期选择支持高亮、上下月灰显、今天按钮
+- TailwindCSS 样式
+- 组件化设计，便于二次开发
 
-## Expanding the ESLint configuration
+## 📦 目录结构
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/components/
+  Calendar.tsx           // 主日历组件
+  CalendarHeader.tsx     // 头部（年月/区间切换）
+  CalendarWeekdays.tsx   // 星期栏
+  CalendarDaysGrid.tsx   // 日期网格
+  CalendarFooter.tsx     // 底部“今天”按钮
+  CalendarMonths.tsx     // 月份选择
+  CalendarYears.tsx      // 年份选择
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 快速使用
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+在 `App.tsx` 中直接引入并使用：
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```tsx
+import Calendar from "./components/Calendar";
+
+function App() {
+  return <Calendar />;
+}
 ```
+
+## 🛠️ 组件 API（以 Calendar 为例）
+
+目前为内聚式用法，所有交互和状态已内置。若需自定义事件、受控用法，可参考源码扩展：
+
+- 支持年月日切换、年份区间切换、补位年份点击、今天按钮
+- 可通过修改 props 和状态实现受控
+
+## 🎨 自定义说明
+
+- 样式基于 TailwindCSS，可根据需求自定义 className
+- 交互逻辑均有详细注释，便于二次开发
+- 如需国际化、事件标记、范围选择等功能，可在现有基础上扩展
+
+---
